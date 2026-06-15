@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatPrice, formatToken, formatUsd } from "../lib/format";
 import { ConnectButton } from "../components/ConnectButton";
+import { AnimatedNumber, Reveal, staggerContainer, staggerItem } from "../components/motion";
 
 const COLORS = ["#d9b945", "#2f6b4c", "#c9a227", "#235039"];
 
@@ -11,7 +13,15 @@ export function Dashboard() {
 
   if (!isConnected) {
     return (
-      <div className="card mx-auto max-w-md text-center">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="card-hover accent-top mx-auto max-w-md text-center"
+      >
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold-500/10 text-2xl">
+          🔐
+        </div>
         <h2 className="font-serif text-2xl font-bold">Connect your wallet</h2>
         <p className="mt-2 text-sm text-cream/70">
           Connect to view your CommodiFi balances and portfolio value.
@@ -19,7 +29,7 @@ export function Dashboard() {
         <div className="mt-6 flex justify-center">
           <ConnectButton />
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -29,27 +39,35 @@ export function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <Reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-bold">Dashboard</h1>
+          <h1 className="font-serif text-4xl font-bold">Dashboard</h1>
           <p className="text-sm text-cream/60">Your tokenized commodity portfolio</p>
         </div>
-        <div className="card !p-5 text-right">
+        <div className="card accent-top relative overflow-hidden !p-5 text-right">
           <div className="text-xs uppercase tracking-wide text-cream/40">Total Portfolio Value</div>
-          <div className="font-serif text-3xl text-gold-300">{formatUsd(totalUsd)}</div>
+          <div className="font-serif text-4xl text-gold-gradient">
+            <AnimatedNumber value={totalUsd} format={(n) => formatUsd(n)} />
+          </div>
         </div>
-      </div>
+      </Reveal>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Balances */}
         <div className="lg:col-span-2">
-          <div className="card">
+          <Reveal className="card">
             <h2 className="mb-4 font-serif text-lg">Balances</h2>
-            <div className="space-y-2">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+              className="space-y-2"
+            >
               {entries.map((e) => (
-                <div
+                <motion.div
                   key={e.symbol}
-                  className="flex items-center justify-between rounded-lg border border-forest-800/60 px-4 py-3"
+                  variants={staggerItem}
+                  className="flex items-center justify-between rounded-xl border border-forest-800/60 bg-forest-950/30 px-4 py-3 transition-all duration-200 hover:border-gold-400/30 hover:bg-forest-800/40"
                 >
                   <div>
                     <div className="font-semibold">{e.symbol}</div>
@@ -64,14 +82,14 @@ export function Dashboard() {
                   <Link to={`/trade/${e.symbol}`} className="btn-outline ml-4 !py-1.5 !text-xs">
                     Trade
                   </Link>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </Reveal>
         </div>
 
         {/* Allocation chart */}
-        <div className="card">
+        <Reveal delay={0.1} className="card">
           <h2 className="mb-2 font-serif text-lg">Allocation</h2>
           {allocation.length === 0 ? (
             <p className="py-12 text-center text-sm text-cream/50">
@@ -87,6 +105,7 @@ export function Dashboard() {
                   innerRadius={55}
                   outerRadius={90}
                   paddingAngle={2}
+                  animationDuration={800}
                 >
                   {allocation.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="none" />
@@ -104,7 +123,7 @@ export function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           )}
-        </div>
+        </Reveal>
       </div>
     </div>
   );

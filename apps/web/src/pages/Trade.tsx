@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { parseUnits } from "viem";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { ASSETS, addresses, commodiFiVaultAbi } from "@commodifi/contracts-abi";
 import { useAssets } from "../hooks/useAssets";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatPrice, formatToken, formatUsd, tokenValueUsd } from "../lib/format";
 import { ConnectButton } from "../components/ConnectButton";
+import { Reveal } from "../components/motion";
 
 type Mode = "mint" | "redeem";
 
@@ -65,14 +67,14 @@ export function Trade() {
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
-      <div>
-        <h1 className="font-serif text-3xl font-bold">Mint / Redeem</h1>
+      <Reveal>
+        <h1 className="font-serif text-4xl font-bold">Mint / Redeem</h1>
         <p className="text-sm text-cream/60">
           Mint tokenized commodities by depositing (simulated) collateral, or redeem to burn.
         </p>
-      </div>
+      </Reveal>
 
-      <div className="card space-y-5">
+      <Reveal delay={0.1} className="card accent-top space-y-5">
         {/* Asset selector */}
         <div className="grid grid-cols-4 gap-2">
           {ASSETS.map((a) => (
@@ -82,12 +84,19 @@ export function Trade() {
                 setSelected(a.symbol);
                 navigate(`/trade/${a.symbol}`, { replace: true });
               }}
-              className={`rounded-lg border px-2 py-3 text-center transition ${
+              className={`relative rounded-lg border px-2 py-3 text-center transition ${
                 selected === a.symbol
-                  ? "border-gold-400 bg-gold-500/10"
-                  : "border-forest-700 hover:border-forest-600"
+                  ? "border-gold-400 text-gold-300"
+                  : "border-forest-700 text-cream/70 hover:border-forest-600"
               }`}
             >
+              {selected === a.symbol && (
+                <motion.span
+                  layoutId="asset-select"
+                  className="absolute inset-0 -z-10 rounded-lg bg-gold-500/10"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
               <div className="text-sm font-medium">{a.symbol}</div>
             </button>
           ))}
@@ -99,10 +108,17 @@ export function Trade() {
             <button
               key={m}
               onClick={() => setMode(m)}
-              className={`flex-1 rounded-md py-2 text-sm font-semibold capitalize transition ${
-                mode === m ? "bg-forest-700 text-gold-300" : "text-cream/60"
+              className={`relative flex-1 rounded-md py-2 text-sm font-semibold capitalize transition ${
+                mode === m ? "text-gold-300" : "text-cream/60"
               }`}
             >
+              {mode === m && (
+                <motion.span
+                  layoutId="mode-toggle"
+                  className="absolute inset-0 -z-10 rounded-md bg-forest-700"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
               {m}
             </button>
           ))}
@@ -158,22 +174,34 @@ export function Trade() {
           </button>
         )}
 
-        {isSuccess && (
-          <div className="rounded-lg border border-forest-600 bg-forest-800/40 p-3 text-sm text-gold-300">
-            ✓ Transaction confirmed.
-          </div>
-        )}
-        {error && (
-          <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-300">
-            {error.message.split("\n")[0]}
-          </div>
-        )}
+        <AnimatePresence>
+          {isSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3 text-sm text-emerald-300"
+            >
+              <span className="text-base">✓</span> Transaction confirmed.
+            </motion.div>
+          )}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-xs text-red-300"
+            >
+              {error.message.split("\n")[0]}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <p className="text-xs text-cream/40">
           Note: deposits are simulated (mock RWA). Minting is a single transaction, no ERC-20
           approval required.
         </p>
-      </div>
+      </Reveal>
     </div>
   );
 }
