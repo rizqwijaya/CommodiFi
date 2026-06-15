@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { motion, AnimatePresence } from "framer-motion";
+import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from "recharts";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatPrice, formatToken, formatUsd } from "../lib/format";
 import { ConnectButton } from "../components/ConnectButton";
@@ -9,8 +11,38 @@ import { staggerContainer, staggerItem } from "../components/motion-variants";
 
 const COLORS = ["#d9b945", "#2f6b4c", "#c9a227", "#235039"];
 
+// Enlarged + glowing slice for the hovered segment.
+function ActiveSlice(props: PieSectorDataItem) {
+  const { cx, cy, innerRadius, outerRadius = 0, startAngle, endAngle, fill } = props;
+  return (
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 8}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        style={{ filter: `drop-shadow(0 0 10px ${fill})` }}
+      />
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={(outerRadius ?? 0) + 11}
+        outerRadius={(outerRadius ?? 0) + 13}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        opacity={0.5}
+      />
+    </g>
+  );
+}
+
 export function Dashboard() {
   const { entries, totalUsd, isConnected } = usePortfolio();
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   if (!isConnected) {
     return (
@@ -37,6 +69,9 @@ export function Dashboard() {
   const allocation = entries
     .filter((e) => e.valueUsd > 0)
     .map((e) => ({ name: e.symbol, value: e.valueUsd }));
+  const allocTotal = allocation.reduce((s, a) => s + a.value, 0);
+  const active = activeIndex !== null ? allocation[activeIndex] : null;
+  const activeColor = activeIndex !== null ? COLORS[activeIndex % COLORS.length] : undefined;
 
   return (
     <div className="space-y-8">
@@ -97,32 +132,112 @@ export function Dashboard() {
               No holdings yet. Mint some assets to see your allocation.
             </p>
           ) : (
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie
-                  data={allocation}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={55}
-                  outerRadius={90}
-                  paddingAngle={2}
-                  animationDuration={800}
-                >
-                  {allocation.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="none" />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(v: number) => formatUsd(v)}
-                  contentStyle={{
-                    background: "#0d1b14",
-                    border: "1px solid #1b3a2a",
-                    borderRadius: 8,
-                    color: "#f5f1e6",
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <>
+              <div className="relative">
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie
+                      data={allocation}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={62}
+                      outerRadius={92}
+                      paddingAngle={3}
+                      cornerRadius={5}
+                      animationDuration={800}
+                      activeIndex={activeIndex ?? undefined}
+                      activeShape={ActiveSlice}
+                      onMouseEnter={(_, i) => setActiveIndex(i)}
+                      onMouseLeave={() => setActiveIndex(null)}
+                    >
+                      {allocation.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={COLORS[i % COLORS.length]}
+                          stroke="none"
+                          className="cursor-pointer transition-opacity"
+                          opacity={activeIndex === null || activeIndex === i ? 1 : 0.4}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+
+                {/* Center overlay: shows hovered slice, else total */}
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {active ? (
+                      <motion.div
+                        key={active.name}
+                        initial={{ opacity: 0, scale: 0.8, y: 4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-center"
+                      >
+                        <div className="flex items-center justify-center gap-1.5 text-sm font-semibold">
+                          <span
+                            className="h-2 w-2 rounded-full"
+                            style={{ background: activeColor }}
+                          />
+                          {active.name}
+                        </div>
+                        <div className="font-serif text-lg text-gold-gradient">
+                          {formatUsd(active.value)}
+                        </div>
+                        <div className="text-xs text-cream/50">
+                          {((active.value / allocTotal) * 100).toFixed(1)}%
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="total"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-center"
+                      >
+                        <div className="text-[10px] uppercase tracking-wide text-cream/40">
+                          Total
+                        </div>
+                        <div className="font-serif text-lg text-cream">{formatUsd(allocTotal)}</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Interactive legend */}
+              <div className="mt-4 space-y-1.5">
+                {allocation.map((a, i) => (
+                  <button
+                    key={a.name}
+                    onMouseEnter={() => setActiveIndex(i)}
+                    onMouseLeave={() => setActiveIndex(null)}
+                    className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-sm transition ${
+                      activeIndex === i ? "bg-forest-800/60" : "hover:bg-forest-800/30"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="h-2.5 w-2.5 rounded-full transition-transform"
+                        style={{
+                          background: COLORS[i % COLORS.length],
+                          transform: activeIndex === i ? "scale(1.4)" : "scale(1)",
+                        }}
+                      />
+                      <span className={activeIndex === i ? "text-cream" : "text-cream/70"}>
+                        {a.name}
+                      </span>
+                    </span>
+                    <span className="tabular-nums text-cream/60">
+                      {((a.value / allocTotal) * 100).toFixed(1)}%
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
         </Reveal>
       </div>
