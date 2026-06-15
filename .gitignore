@@ -1,0 +1,31 @@
+# Compiler files
+cache/
+out/
+
+# Commonly ignored directories
+.logs/
+.ignore/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+.env.*
+!.env.example
+
+# Node / monorepo
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+apps/web/dist/
+apps/api/dist/
+apps/api/*.sqlite
+apps/api/data/
+.vite/

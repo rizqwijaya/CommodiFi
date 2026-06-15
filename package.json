@@ -1,0 +1,18 @@
+{
+  "name": "commodifi",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CommodiFi — Indonesia's Real-World Assets, On-Chain. pnpm monorepo (web + api + shared ABI).",
+  "packageManager": "pnpm@11.5.0",
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "build": "pnpm -r build",
+    "dev:web": "pnpm --filter @commodifi/web dev",
+    "dev:api": "pnpm --filter @commodifi/api dev",
+    "typecheck": "pnpm -r typecheck",
+    "abi:sync": "pnpm --filter @commodifi/contracts-abi sync"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Allow native/build scripts only for the packages that genuinely need them.
+# (better-sqlite3 dropped in favor of the built-in node:sqlite module.)
+onlyBuiltDependencies:
+  - esbuild

@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-forest-950 text-cream font-sans antialiased;
+    background-image: radial-gradient(
+        circle at 15% -10%,
+        rgba(201, 162, 39, 0.08),
+        transparent 45%
+      ),
+      radial-gradient(circle at 90% 0%, rgba(35, 80, 57, 0.4), transparent 40%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-forest-700/60 bg-forest-900/70 p-6 shadow-lg shadow-black/30 backdrop-blur;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-gold {
+    @apply btn bg-gold-500 text-forest-950 hover:bg-gold-400;
+  }
+  .btn-outline {
+    @apply btn border border-forest-600 text-cream hover:border-gold-400 hover:text-gold-300;
+  }
+  .input {
+    @apply w-full rounded-lg border border-forest-700 bg-forest-950/60 px-3 py-2 text-cream placeholder:text-cream/40 focus:border-gold-400 focus:outline-none;
+  }
+  .pill {
+    @apply inline-block rounded-full border border-gold-500/40 bg-gold-500/10 px-3 py-1 text-xs font-medium text-gold-300;
+  }
+}
