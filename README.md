@@ -47,7 +47,9 @@ pnpm dev:web                              # http://localhost:5173
 ### Web pages
 
 Landing (hero + 4 asset cards) · Dashboard (balances + portfolio value + allocation chart) ·
-Mint/Redeem · Asset Detail (price chart + reserves) · Admin (owner-only oracle price control).
+Mint/Redeem · Asset Detail (price chart + reserves).
+
+Oracle prices are updated out-of-band via the Foundry deploy script / `cast` (owner-only).
 
 ---
 

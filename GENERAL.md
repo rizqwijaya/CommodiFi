@@ -84,9 +84,6 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 - Total reserve / circulating supply
 - Mint/redeem shortcut
 
-### 5.5 Admin Page (Oracle Control)
-- Owner-only: update mock prices per asset (for demo purposes)
-
 ---
 
 ## 6. Backend (Indexer + API)

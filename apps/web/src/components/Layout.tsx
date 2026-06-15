@@ -5,7 +5,6 @@ const navItems = [
   { to: "/", label: "Home", end: true },
   { to: "/dashboard", label: "Dashboard" },
   { to: "/trade", label: "Mint / Redeem" },
-  { to: "/admin", label: "Admin" },
 ];
 
 export function Layout() {
