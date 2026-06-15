@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Earthy, institutional CommodiFi palette — deep green + gold.
+        // Earthy, institutional CommodiFi palette - deep green + gold.
         forest: {
           950: "#08110d",
           900: "#0d1b14",

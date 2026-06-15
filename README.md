@@ -5,7 +5,7 @@
 Mock RWA tokenization protocol for four Indonesian commodity classes (gold, nickel, CPO, coal).
 pnpm monorepo: Foundry smart contracts + React web app + Node indexer/REST API.
 
-Deployed to **Sepolia** and verified — see [DEPLOYMENTS.md](DEPLOYMENTS.md).
+Deployed to **Sepolia** and verified - see [DEPLOYMENTS.md](DEPLOYMENTS.md).
 
 ## Monorepo layout
 
@@ -32,7 +32,7 @@ pnpm dev:web                              # http://localhost:5173
 
 `pnpm dev` runs both in parallel. `pnpm build` builds all packages; `pnpm typecheck` typechecks all.
 
-> **Free RPC tiers** (e.g. Alchemy free) cap `eth_getLogs` at 10 blocks — the indexer defaults to
+> **Free RPC tiers** (e.g. Alchemy free) cap `eth_getLogs` at 10 blocks - the indexer defaults to
 > `LOG_CHUNK_SIZE=10`. Set `START_BLOCK` near the deploy block so the initial backfill is fast.
 
 ### REST API
@@ -70,7 +70,7 @@ Mint/Redeem · Asset Detail (price chart + reserves) · Admin (owner-only oracle
 | `tCPO`  | Crude Palm Oil    | Agricultural     | ton  | $900                   |
 | `tCOAL` | Batu Bara (Coal)  | Energy Commodity | ton  | $130                   |
 
-All tokens use 18 decimals. Prices are mock/manual — no real feeds (see GENERAL.md §8).
+All tokens use 18 decimals. Prices are mock/manual - no real feeds (see GENERAL.md §8).
 
 ## Architecture
 

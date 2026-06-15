@@ -23,7 +23,7 @@ export function AssetCard({ asset }: { asset: AssetWithData }) {
         <div>
           <div className="text-xs uppercase tracking-wide text-cream/40">Price</div>
           <div className="font-serif text-2xl text-gold-300">
-            {asset.price > 0n ? formatPrice(asset.price) : "—"}
+            {asset.price > 0n ? formatPrice(asset.price) : "-"}
           </div>
         </div>
         <div className="text-right">

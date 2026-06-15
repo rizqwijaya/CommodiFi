@@ -163,7 +163,7 @@ export async function runIndexerTick(): Promise<void> {
 
 export function startIndexer(): void {
   if (!config.rpcUrl) {
-    console.warn("[indexer] no RPC URL — not starting.");
+    console.warn("[indexer] no RPC URL, not starting.");
     return;
   }
   console.log("[indexer] starting; polling every", config.pollIntervalMs, "ms");

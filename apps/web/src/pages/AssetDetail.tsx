@@ -67,7 +67,7 @@ export function AssetDetail() {
         </div>
         {isError ? (
           <p className="py-12 text-center text-sm text-cream/50">
-            Price history unavailable — is the API running on{" "}
+            Price history unavailable. Is the API running on{" "}
             <code className="text-gold-300">/price-history</code>?
           </p>
         ) : !history || history.length === 0 ? (

@@ -14,7 +14,7 @@ export function createServer() {
     res.json({ ok: true, service: "commodifi-api", time: Date.now() });
   });
 
-  // GET /assets — all assets with current prices & reserves (live on-chain reads).
+  // GET /assets: all assets with current prices & reserves (live on-chain reads).
   app.get("/assets", async (_req, res) => {
     try {
       const assets = await readAssets();
@@ -24,7 +24,7 @@ export function createServer() {
     }
   });
 
-  // GET /portfolio/:address — user balances + USD valuation across all tokens.
+  // GET /portfolio/:address: user balances + USD valuation across all tokens.
   app.get("/portfolio/:address", async (req, res) => {
     const { address } = req.params;
     if (!isAddress(address)) {
@@ -39,7 +39,7 @@ export function createServer() {
     }
   });
 
-  // GET /price-history/:token — indexed PriceUpdate series, padded into a mock chart series.
+  // GET /price-history/:token: indexed PriceUpdate series, padded into a mock chart series.
   // :token accepts a token address or a symbol (tGOLD/tNKL/tCPO/tCOAL).
   app.get("/price-history/:token", (req, res) => {
     const token = resolveToken(req.params.token);
@@ -53,7 +53,7 @@ export function createServer() {
     res.json({ token, points: series });
   });
 
-  // GET /events — recent indexed activity (optional ?token= & ?address= filters).
+  // GET /events: recent indexed activity (optional ?token= & ?address= filters).
   app.get("/events", (req, res) => {
     const tokenParam = typeof req.query.token === "string" ? resolveToken(req.query.token) : undefined;
     const address =
@@ -84,7 +84,7 @@ interface SeriesPoint {
 /**
  * Turn the raw indexed PriceUpdate rows into a chart-friendly series. If only a single point
  * exists (e.g. just the seed), synthesize a gentle mock trail leading up to it so the detail
- * page chart has shape — explicitly mock, per GENERAL.md §8.
+ * page chart has shape (explicitly mock, per GENERAL.md §8).
  */
 function buildSeries(rows: Array<{ price: string; time: number }>): SeriesPoint[] {
   const real = rows.map((r) => ({ time: r.time, price: Number(r.price) / 1e8 }));

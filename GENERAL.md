@@ -1,4 +1,4 @@
-# CommodiFi — General Specification
+# CommodiFi - General Specification
 
 ## 1. Overview
 
@@ -37,20 +37,20 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 ## 4. Smart Contract Architecture
 
 ### 4.1 `RWAToken.sol` (ERC-20)
-- Deployed 4x — one per asset (tGOLD, tNKL, tCPO, tCOAL)
+- Deployed 4x, one per asset (tGOLD, tNKL, tCPO, tCOAL)
 - Standard ERC-20 (OpenZeppelin) with mint/burn restricted to `CommodiFiVault` contract
 - Each token stores metadata: asset name, unit (e.g., "gram", "ton", "barrel"), reference symbol
 
 ### 4.2 `PriceOracle.sol`
-- Mock oracle, owner-updatable price feed per asset (price in USD, 8 decimals — Chainlink-style format)
+- Mock oracle, owner-updatable price feed per asset (price in USD, 8 decimals, Chainlink-style format)
 - Function: `setPrice(address token, uint256 price)`
 - Function: `getPrice(address token) returns (uint256)`
 - Seed with realistic starting prices (e.g., gold ~$2,400/oz equivalent, nickel, CPO, coal at representative market rates)
 
 ### 4.3 `CommodiFiVault.sol` (Core Vault/Registry)
 - Central contract managing deposit/mint and redeem/burn flows
-- `deposit(address token, uint256 amount)` — simulates depositing collateral, mints corresponding RWA token
-- `redeem(address token, uint256 amount)` — burns RWA token, simulates withdrawal
+- `deposit(address token, uint256 amount)`: simulates depositing collateral, mints corresponding RWA token
+- `redeem(address token, uint256 amount)`: burns RWA token, simulates withdrawal
 - Tracks total reserves per asset (`totalSupply` mirrors reserve for demo realism)
 - `getAssetInfo(address token)` returns price, reserve, category
 
@@ -75,8 +75,8 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 
 ### 5.3 Mint/Redeem Page
 - Select asset (tGOLD / tNKL / tCPO / tCOAL)
-- Deposit (mint) flow — input amount, approve + deposit
-- Redeem (burn) flow — input amount, redeem
+- Deposit (mint) flow: input amount, approve + deposit
+- Redeem (burn) flow: input amount, redeem
 - Display live price from oracle, estimated USD value
 
 ### 5.4 Asset Detail Page
@@ -94,16 +94,16 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 - Listen to `Deposit`, `Redeem`, `Transfer`, `PriceUpdate` events
 - Store in lightweight DB (SQLite or in-memory for demo)
 - REST endpoints:
-  - `GET /assets` — list all assets with current prices & reserves
-  - `GET /portfolio/:address` — user balances across all tokens
-  - `GET /price-history/:token` — mock historical price series
+  - `GET /assets`: list all assets with current prices & reserves
+  - `GET /portfolio/:address`: user balances across all tokens
+  - `GET /price-history/:token`: mock historical price series
 
 ---
 
 ## 7. Branding & Identity
 
-- **Name:** CommodiFi (Commodity + DeFi — direct, descriptive branding for a commodity-backed RWA protocol)
-- **Theme:** Earthy, institutional — deep green/gold palette reflecting commodity & heritage
+- **Name:** CommodiFi (Commodity + DeFi, direct descriptive branding for a commodity-backed RWA protocol)
+- **Theme:** Earthy, institutional. Deep green/gold palette reflecting commodity & heritage
 - **Tone:** Professional, TradFi-credible, institutional-grade RWA narrative
 
 ---
@@ -112,7 +112,7 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 
 - No real banking, custody, or KYC integration
 - No real Antam/commodity exchange price feeds (manual mock oracle only)
-- No legal/regulatory compliance (OJK, Bappebti) — portfolio demo only
+- No legal/regulatory compliance (OJK, Bappebti); portfolio demo only
 
 ---
 

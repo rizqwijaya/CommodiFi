@@ -112,7 +112,7 @@ export function Trade() {
         {/* Price + balance */}
         <div className="flex justify-between text-sm">
           <span className="text-cream/60">
-            Price: <span className="text-gold-300">{asset ? formatPrice(asset.price) : "—"}</span>
+            Price: <span className="text-gold-300">{asset ? formatPrice(asset.price) : "-"}</span>
           </span>
           <span className="text-cream/60">
             Balance: {holding ? formatToken(holding.balance) : "0"} {selected}
@@ -171,7 +171,7 @@ export function Trade() {
         )}
 
         <p className="text-xs text-cream/40">
-          Note: deposits are simulated (mock RWA) — minting is a single transaction, no ERC-20
+          Note: deposits are simulated (mock RWA). Minting is a single transaction, no ERC-20
           approval required.
         </p>
       </div>

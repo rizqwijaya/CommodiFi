@@ -44,7 +44,7 @@ export function Layout() {
       </main>
 
       <footer className="border-t border-forest-800/60 py-6 text-center text-xs text-cream/40">
-        CommodiFi — mock RWA protocol on Sepolia. Prices & reserves are simulated for demo
+        CommodiFi - mock RWA protocol on Sepolia. Prices & reserves are simulated for demo
         purposes only.
       </footer>
     </div>

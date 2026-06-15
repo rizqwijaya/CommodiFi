@@ -1,4 +1,4 @@
-# CommodiFi — Deployed Addresses
+# CommodiFi - Deployed Addresses
 
 **Network:** Ethereum Sepolia (chain ID `11155111`)
 **Deployed:** 2026-06-15

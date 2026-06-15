@@ -48,7 +48,7 @@ export function Admin() {
           <span className="text-gold-300">{shortAddress(owner?.toString())}</span>.
         </p>
         <p className="mt-2 text-xs text-cream/40">
-          Connected as {shortAddress(address)} — not authorized.
+          Connected as {shortAddress(address)} (not authorized).
         </p>
       </Gate>
     );

@@ -19,7 +19,7 @@ import {PriceOracle} from "./PriceOracle.sol";
  *         demo realism and cheap reads).
  *
  * @dev This vault must be authorized on each RWAToken via RWAToken.setVault(address(this)).
- *      Collateral movement is simulated (mock RWA) — no ERC-20 transfer-in occurs.
+ *      Collateral movement is simulated (mock RWA); no ERC-20 transfer-in occurs.
  */
 contract CommodiFiVault is Ownable, ReentrancyGuard {
     /// @notice Mock oracle used to price assets.

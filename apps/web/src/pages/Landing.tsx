@@ -15,8 +15,8 @@ export function Landing() {
           <span className="text-gold-400">On-Chain.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-cream/70">
-          CommodiFi tokenizes fractional ownership of Indonesia's key commodities — gold, nickel,
-          crude palm oil, and coal — bridging traditional commodity markets and DeFi liquidity.
+          CommodiFi tokenizes fractional ownership of Indonesia's key commodities (gold, nickel,
+          crude palm oil, and coal), bridging traditional commodity markets and DeFi liquidity.
           Mint, hold, and redeem on-chain claims backed by a transparent price oracle.
         </p>
         <div className="mt-8 flex justify-center gap-3">

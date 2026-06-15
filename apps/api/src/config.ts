@@ -21,6 +21,6 @@ export const config = {
 
 if (!config.rpcUrl) {
   console.warn(
-    "[config] SEPOLIA_RPC_URL not set — indexer disabled, live on-chain reads will fail. Copy apps/api/.env.example to apps/api/.env.",
+    "[config] SEPOLIA_RPC_URL not set. Indexer disabled, live on-chain reads will fail. Copy apps/api/.env.example to apps/api/.env.",
   );
 }

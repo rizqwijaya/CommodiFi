@@ -79,7 +79,7 @@ contract RWATokenTest is Test {
         vm.prank(owner);
         token.setVault(vault);
 
-        // even the owner cannot mint — only the vault can.
+        // even the owner cannot mint; only the vault can.
         vm.prank(owner);
         vm.expectRevert(abi.encodeWithSelector(RWAToken.NotVault.selector, owner));
         token.mint(user, 100e18);

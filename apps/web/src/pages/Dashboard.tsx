@@ -56,7 +56,7 @@ export function Dashboard() {
                     <div>
                       <div className="font-semibold">{e.symbol}</div>
                       <div className="text-xs text-cream/50">
-                        {e.price > 0n ? formatPrice(e.price) : "—"} / unit
+                        {e.price > 0n ? formatPrice(e.price) : "-"} / unit
                       </div>
                     </div>
                   </div>
