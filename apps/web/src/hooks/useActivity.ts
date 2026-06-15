@@ -13,7 +13,7 @@ export interface ActivityItem {
 
 /**
  * Recent on-chain activity (Deposit / Redeem / Transfer) for the connected wallet,
- * pulled from the indexer API. Fails soft — returns [] if the API is unreachable.
+ * pulled from the indexer API. Fails soft, returns [] if the API is unreachable.
  */
 export function useActivity(limit = 6) {
   const { address } = useAccount();

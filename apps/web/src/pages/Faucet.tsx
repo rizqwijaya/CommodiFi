@@ -86,7 +86,7 @@ export function Faucet() {
         <DrippingTap busy={busy} />
         <h1 className="mt-2 font-serif text-4xl font-bold">Token Faucet</h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-cream/60">
-          Grab free test tokens to explore CommodiFi. Claim flows straight to your wallet — you
+          Grab free test tokens to explore CommodiFi. Claim flows straight to your wallet, you
           only pay Sepolia gas. It's all simulated, so help yourself.
         </p>
       </Reveal>

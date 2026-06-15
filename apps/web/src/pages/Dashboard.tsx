@@ -328,7 +328,7 @@ function ActivityFeed({ items, error }: { items: ActivityItem[]; error: boolean 
   if (error) {
     return (
       <p className="py-6 text-center text-sm text-cream/40">
-        Activity feed offline — start the API to see recent deposits & redeems.
+        Activity feed offline. Start the API to see recent deposits & redeems.
       </p>
     );
   }
@@ -361,12 +361,12 @@ function ActivityFeed({ items, error }: { items: ActivityItem[]; error: boolean 
                 {isMint ? "Minted" : "Redeemed"} {it.symbol}
               </div>
               <div className="text-xs text-cream/40">
-                {it.time ? new Date(it.time * 1000).toLocaleString() : "—"}
+                {it.time ? new Date(it.time * 1000).toLocaleString() : "-"}
               </div>
             </div>
             <div className="text-right">
               <div className="text-sm tabular-nums text-cream/80">
-                {it.amount ? formatToken(BigInt(it.amount)) : "—"}
+                {it.amount ? formatToken(BigInt(it.amount)) : "-"}
               </div>
               <a
                 href={`https://sepolia.etherscan.io/tx/${it.txHash}`}
