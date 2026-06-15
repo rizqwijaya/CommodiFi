@@ -70,11 +70,11 @@ export function Landing() {
           transition={{ duration: 0.7, delay: 0.25 }}
           className="mt-9 flex justify-center gap-3"
         >
-          <Link to="/trade" className="btn-gold px-6 py-3 text-base">
-            Start Minting
+          <Link to="/faucet" className="btn-gold px-6 py-3 text-base">
+            💧 Get Test Tokens
           </Link>
-          <Link to="/dashboard" className="btn-outline px-6 py-3 text-base">
-            View Dashboard
+          <Link to="/trade" className="btn-outline px-6 py-3 text-base">
+            Start Minting
           </Link>
         </motion.div>
 

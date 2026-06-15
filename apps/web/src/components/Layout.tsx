@@ -5,8 +5,9 @@ import { AppBackground } from "./AppBackground";
 
 const navItems = [
   { to: "/", label: "Home", end: true },
-  { to: "/dashboard", label: "Dashboard" },
   { to: "/trade", label: "Mint / Redeem" },
+  { to: "/faucet", label: "Faucet" },
+  { to: "/dashboard", label: "Dashboard" },
 ];
 
 export function Layout() {
@@ -20,7 +21,7 @@ export function Layout() {
       <AppBackground />
 
       <header className="sticky top-0 z-20 border-b border-forest-800/60 bg-forest-950/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+        <div className="relative mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <NavLink to="/" className="group flex items-center gap-2.5">
             <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-gold-400 to-gold-500 font-serif text-lg font-bold text-forest-950 shadow-glow transition-transform duration-300 group-hover:scale-110">
               C
@@ -31,7 +32,7 @@ export function Layout() {
             </span>
           </NavLink>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
