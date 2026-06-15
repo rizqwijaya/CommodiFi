@@ -63,12 +63,11 @@ export function AssetDetail() {
       <motion.div
         variants={staggerContainer}
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
+        animate="show"
         className="grid gap-4 sm:grid-cols-3"
       >
         <Stat label="Current Price" value={formatPrice(asset.price)} accent />
-        <Stat label="Total Reserve" value={`${formatToken(asset.reserve)} ${asset.unit}`} />
+        <Stat label="Total Reserve" value={`${formatToken(asset.reserve)} ${asset.symbol}`} />
         <Stat label="Circulating Supply" value={`${formatToken(asset.totalSupply)} ${asset.symbol}`} />
       </motion.div>
 

@@ -38,7 +38,7 @@ export function AssetCard({ asset }: { asset: AssetWithData }) {
         <div className="text-right">
           <div className="text-xs uppercase tracking-wide text-cream/40">Reserve</div>
           <div className="text-sm text-cream/80">
-            {formatToken(asset.reserve)} {asset.unit}
+            {formatToken(asset.reserve)} {asset.symbol}
           </div>
         </div>
       </div>

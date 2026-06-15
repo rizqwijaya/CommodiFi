@@ -1,5 +1,5 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { NavLink, Outlet } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ConnectButton } from "./ConnectButton";
 import { AppBackground } from "./AppBackground";
 
@@ -11,11 +11,6 @@ const navItems = [
 ];
 
 export function Layout() {
-  const location = useLocation();
-  // Key the page transition on the top-level section only, so navigating between
-  // sub-routes (e.g. /trade -> /trade/tNKL) does not re-mount and re-animate the page.
-  const sectionKey = "/" + (location.pathname.split("/")[1] ?? "");
-
   return (
     <div className="relative min-h-screen">
       <AppBackground />
@@ -65,17 +60,7 @@ export function Layout() {
       </header>
 
       <main className="mx-auto max-w-6xl px-5 py-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={sectionKey}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Outlet />
-          </motion.div>
-        </AnimatePresence>
+        <Outlet />
       </main>
 
       <footer className="border-t border-forest-800/60 py-6 text-center text-xs text-cream/40">

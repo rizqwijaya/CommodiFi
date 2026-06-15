@@ -28,11 +28,11 @@ export function Landing() {
   const ticker = assets.filter((a) => a.price > 0n);
 
   return (
-    <div className="space-y-20">
+    <div className="space-y-14">
       {/* Hero */}
-      <section className="relative pt-10 text-center">
+      <section className="relative pt-4 text-center">
         {/* hero glow halo */}
-        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-72 w-[36rem] -translate-x-1/2 rounded-full bg-gold-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-56 w-[30rem] -translate-x-1/2 rounded-full bg-gold-500/10 blur-3xl" />
 
         <motion.span
           initial={{ opacity: 0, y: 12 }}
@@ -48,7 +48,7 @@ export function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mt-6 max-w-4xl font-serif text-5xl font-bold leading-[1.05] md:text-7xl"
+          className="mx-auto mt-5 max-w-3xl font-serif text-3xl font-bold leading-[1.1] sm:text-4xl md:text-5xl"
         >
           Indonesia's Real-World Assets,{" "}
           <span className="text-gold-gradient">On-Chain.</span>
@@ -58,7 +58,7 @@ export function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mx-auto mt-6 max-w-2xl text-lg text-cream/70"
+          className="mx-auto mt-4 max-w-xl text-sm text-cream/70 sm:text-base"
         >
           CommodiFi tokenizes fractional ownership of Indonesia's key commodities (gold, nickel,
           crude palm oil, and coal), bridging traditional commodity markets and DeFi liquidity.
@@ -68,7 +68,7 @@ export function Landing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.25 }}
-          className="mt-9 flex justify-center gap-3"
+          className="mt-7 flex justify-center gap-3"
         >
           <Link to="/faucet" className="btn-gold px-6 py-3 text-base">
             💧 Get Test Tokens
@@ -109,8 +109,7 @@ export function Landing() {
       <motion.section
         variants={staggerContainer}
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
+        animate="show"
         className="grid gap-4 md:grid-cols-3"
       >
         {features.map((f) => (
@@ -145,8 +144,7 @@ export function Landing() {
           <motion.div
             variants={staggerContainer}
             initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
+            animate="show"
             className="grid gap-4 md:grid-cols-2"
           >
             {assets.map((a) => (

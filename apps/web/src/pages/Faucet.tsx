@@ -152,7 +152,7 @@ export function Faucet() {
                         >
                           +{CLAIM_AMOUNTS[a.symbol]}
                         </motion.span>
-                        <span className="text-xs text-cream/50">{a.unit}</span>
+                        <span className="text-xs text-cream/50">{a.symbol}</span>
                       </div>
                     </div>
                     <div className="text-right">
