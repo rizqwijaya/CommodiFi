@@ -4,7 +4,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatPrice, formatToken, formatUsd } from "../lib/format";
 import { ConnectButton } from "../components/ConnectButton";
-import { AnimatedNumber, Reveal, staggerContainer, staggerItem } from "../components/motion";
+import { AnimatedNumber, Reveal } from "../components/motion";
+import { staggerContainer, staggerItem } from "../components/motion-variants";
 
 const COLORS = ["#d9b945", "#2f6b4c", "#c9a227", "#235039"];
 

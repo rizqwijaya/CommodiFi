@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAssets } from "../hooks/useAssets";
 import { AssetCard } from "../components/AssetCard";
-import { Reveal, staggerContainer, staggerItem } from "../components/motion";
+import { Reveal } from "../components/motion";
+import { staggerContainer, staggerItem } from "../components/motion-variants";
 import { formatPrice } from "../lib/format";
 
 const features = [

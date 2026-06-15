@@ -13,7 +13,8 @@ import {
 import { useAsset } from "../hooks/useAssets";
 import { fetchPriceHistory } from "../lib/api";
 import { formatPrice, formatToken, formatUsd } from "../lib/format";
-import { Reveal, staggerContainer, staggerItem } from "../components/motion";
+import { Reveal } from "../components/motion";
+import { staggerContainer, staggerItem } from "../components/motion-variants";
 
 export function AssetDetail() {
   const { symbol = "" } = useParams();

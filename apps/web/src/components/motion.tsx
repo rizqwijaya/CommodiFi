@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useInView, useMotionValue, useSpring, type Variants } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 
 /** Fade + slide-up on scroll into view. Stagger children with `delay`. */
 export function Reveal({
@@ -27,17 +27,6 @@ export function Reveal({
     </motion.div>
   );
 }
-
-/** Container that staggers its <Reveal>/motion children. */
-export const staggerContainer: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-};
-
-export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-};
 
 /**
  * Animated count-up number. Springs from 0 (or previous value) to `value`,
