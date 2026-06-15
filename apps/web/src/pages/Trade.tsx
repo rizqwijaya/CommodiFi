@@ -8,9 +8,29 @@ import { useAssets } from "../hooks/useAssets";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatPrice, formatToken, formatUsd, tokenValueUsd } from "../lib/format";
 import { ConnectButton } from "../components/ConnectButton";
-import { Reveal } from "../components/motion";
+import { AnimatedNumber, Reveal } from "../components/motion";
 
 type Mode = "mint" | "redeem";
+
+const SYMBOLS: string[] = ASSETS.map((a) => a.symbol);
+
+// Direction-aware 3D swap: incoming panel rotates+slides in from the side you
+// navigated toward; outgoing panel leaves the opposite way.
+const panelVariants = {
+  enter: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? 60 : -60,
+    rotateY: dir > 0 ? 35 : -35,
+    z: -80,
+  }),
+  center: { opacity: 1, x: 0, rotateY: 0, z: 0 },
+  exit: (dir: number) => ({
+    opacity: 0,
+    x: dir > 0 ? -60 : 60,
+    rotateY: dir > 0 ? -35 : 35,
+    z: -80,
+  }),
+};
 
 export function Trade() {
   const { symbol } = useParams();
@@ -22,10 +42,21 @@ export function Trade() {
   const [selected, setSelected] = useState(symbol ?? "tGOLD");
   const [mode, setMode] = useState<Mode>("mint");
   const [amount, setAmount] = useState("");
+  // +1 = moving right (to a later tab), -1 = moving left. Drives the swap direction.
+  const [direction, setDirection] = useState(0);
 
   useEffect(() => {
     if (symbol && ASSETS.some((a) => a.symbol === symbol)) setSelected(symbol);
   }, [symbol]);
+
+  function selectAsset(next: string) {
+    if (next === selected) return;
+    const dir = SYMBOLS.indexOf(next) > SYMBOLS.indexOf(selected) ? 1 : -1;
+    setDirection(dir);
+    setSelected(next);
+    setAmount("");
+    navigate(`/trade/${next}`, { replace: true });
+  }
 
   const asset = assets.find((a) => a.symbol === selected);
   const holding = entries.find((e) => e.symbol === selected);
@@ -75,31 +106,43 @@ export function Trade() {
       </Reveal>
 
       <Reveal delay={0.1} className="card accent-top space-y-5">
-        {/* Asset selector */}
+        {/* Asset selector with morphing spotlight */}
         <div className="grid grid-cols-4 gap-2">
-          {ASSETS.map((a) => (
-            <button
-              key={a.symbol}
-              onClick={() => {
-                setSelected(a.symbol);
-                navigate(`/trade/${a.symbol}`, { replace: true });
-              }}
-              className={`relative rounded-lg border px-2 py-3 text-center transition ${
-                selected === a.symbol
-                  ? "border-gold-400 text-gold-300"
-                  : "border-forest-700 text-cream/70 hover:border-forest-600"
-              }`}
-            >
-              {selected === a.symbol && (
-                <motion.span
-                  layoutId="asset-select"
-                  className="absolute inset-0 -z-10 rounded-lg bg-gold-500/10"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-              <div className="text-sm font-medium">{a.symbol}</div>
-            </button>
-          ))}
+          {ASSETS.map((a) => {
+            const active = selected === a.symbol;
+            return (
+              <motion.button
+                key={a.symbol}
+                onClick={() => selectAsset(a.symbol)}
+                whileTap={{ scale: 0.94 }}
+                animate={{ scale: active ? 1.04 : 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 26 }}
+                className={`relative isolate rounded-xl border px-2 py-3 text-center transition-colors ${
+                  active
+                    ? "border-gold-400/70 text-gold-200"
+                    : "border-forest-700 text-cream/70 hover:border-forest-600 hover:text-cream"
+                }`}
+              >
+                {active && (
+                  <>
+                    {/* morphing spotlight */}
+                    <motion.span
+                      layoutId="asset-spotlight"
+                      className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-br from-gold-500/25 to-gold-400/5"
+                      transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                    />
+                    {/* glow halo */}
+                    <motion.span
+                      layoutId="asset-glow"
+                      className="absolute -inset-1 -z-20 rounded-2xl bg-gold-500/20 blur-md"
+                      transition={{ type: "spring", stiffness: 320, damping: 28 }}
+                    />
+                  </>
+                )}
+                <div className="text-sm font-semibold">{a.symbol}</div>
+              </motion.button>
+            );
+          })}
         </div>
 
         {/* Mode toggle */}
@@ -124,14 +167,40 @@ export function Trade() {
           ))}
         </div>
 
-        {/* Price + balance */}
-        <div className="flex justify-between text-sm">
-          <span className="text-cream/60">
-            Price: <span className="text-gold-300">{asset ? formatPrice(asset.price) : "-"}</span>
-          </span>
-          <span className="text-cream/60">
-            Balance: {holding ? formatToken(holding.balance) : "0"} {selected}
-          </span>
+        {/* Price + balance: 3D direction-aware swap per asset */}
+        <div className="relative h-16 [perspective:1200px]">
+          <AnimatePresence initial={false} mode="popLayout" custom={direction}>
+            <motion.div
+              key={selected}
+              custom={direction}
+              variants={panelVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 flex items-center justify-between rounded-xl border border-forest-800/60 bg-forest-950/40 px-4 [transform-style:preserve-3d]"
+            >
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-cream/40">Price</div>
+                <div className="font-serif text-xl text-gold-gradient">
+                  {asset && asset.price > 0n ? (
+                    <AnimatedNumber
+                      value={Number(asset.price) / 1e8}
+                      format={(n) => formatPrice(BigInt(Math.round(n * 1e8)))}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] uppercase tracking-wide text-cream/40">Balance</div>
+                <div className="text-sm text-cream/80">
+                  {holding ? formatToken(holding.balance) : "0"} {selected}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Amount input */}

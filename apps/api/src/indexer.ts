@@ -34,6 +34,19 @@ async function blockTime(blockNumber: bigint): Promise<number | null> {
   }
 }
 
+/**
+ * Cheap fallback timestamp for non-PriceUpdate events: extrapolate from any cached
+ * (block -> time) pair assuming ~12s Sepolia block time, else just use "now".
+ */
+function estimateBlockTime(blockNumber: number): number {
+  const anchor = [...blockTimeCache.entries()][0];
+  if (anchor) {
+    const [anchorBlock, anchorTime] = anchor;
+    return anchorTime + (blockNumber - Number(anchorBlock)) * 12;
+  }
+  return Math.floor(Date.now() / 1000);
+}
+
 type AnyLog = Log<bigint, number, false>;
 
 function baseRow(log: AnyLog, type: EventRow["type"]): EventRow {
@@ -116,11 +129,15 @@ async function scanRange(fromBlock: bigint, toBlock: bigint): Promise<number> {
     rows.push(r);
   }
 
-  // Resolve block timestamps (deduped via cache).
-  const uniqueBlocks = [...new Set(rows.map((r) => BigInt(r.block_number)))];
-  await Promise.all(uniqueBlocks.map((b) => blockTime(b)));
+  // Only PriceUpdate rows need an accurate timestamp (for the price chart). Resolve
+  // those block times; everything else gets a best-effort estimate. This keeps the
+  // request volume low so free RPC tiers don't 429 us.
+  const priceBlocks = [...new Set(rows.filter((r) => r.type === "PriceUpdate").map((r) => BigInt(r.block_number)))];
+  for (const b of priceBlocks) {
+    await blockTime(b); // sequential + cached; viem retries 429 with backoff
+  }
   for (const r of rows) {
-    r.block_time = blockTimeCache.get(BigInt(r.block_number)) ?? null;
+    r.block_time = blockTimeCache.get(BigInt(r.block_number)) ?? estimateBlockTime(r.block_number);
   }
 
   if (rows.length) insertEvents(rows);
