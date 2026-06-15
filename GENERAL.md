@@ -65,7 +65,7 @@ Each token represents a fractional claim on a simulated reserve of the underlyin
 ### 5.1 Landing Page
 - Hero section: "Indonesia's Real-World Assets, On-Chain"
 - Brief explainer on RWA tokenization + TradFi-DeFi convergence
-- Showcase 4 asset cards (icon, name, current price, category)
+- Showcase 4 asset cards (name, current price, category)
 
 ### 5.2 Dashboard
 - Wallet connection (wagmi)

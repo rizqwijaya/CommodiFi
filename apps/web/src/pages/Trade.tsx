@@ -88,8 +88,7 @@ export function Trade() {
                   : "border-forest-700 hover:border-forest-600"
               }`}
             >
-              <div className="text-xl">{a.icon}</div>
-              <div className="mt-1 text-xs font-medium">{a.symbol}</div>
+              <div className="text-sm font-medium">{a.symbol}</div>
             </button>
           ))}
         </div>

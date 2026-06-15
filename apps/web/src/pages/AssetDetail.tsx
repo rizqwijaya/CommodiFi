@@ -35,16 +35,13 @@ export function AssetDetail() {
       </Link>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <span className="text-5xl">{asset.icon}</span>
-          <div>
-            <h1 className="font-serif text-3xl font-bold">{asset.assetName}</h1>
-            <div className="mt-1 flex items-center gap-3">
-              <span className="pill">{asset.category}</span>
-              <span className="text-sm text-cream/50">
-                {asset.symbol} · ref {asset.referenceSymbol}
-              </span>
-            </div>
+        <div>
+          <h1 className="font-serif text-3xl font-bold">{asset.assetName}</h1>
+          <div className="mt-1 flex items-center gap-3">
+            <span className="pill">{asset.category}</span>
+            <span className="text-sm text-cream/50">
+              {asset.symbol} · ref {asset.referenceSymbol}
+            </span>
           </div>
         </div>
         <Link to={`/trade/${asset.symbol}`} className="btn-gold">

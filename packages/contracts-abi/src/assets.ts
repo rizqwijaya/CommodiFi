@@ -13,8 +13,6 @@ export interface AssetMeta {
   unit: string; // physical unit the fraction tracks
   referenceSymbol: string; // market reference symbol
   decimals: number;
-  /** Emoji icon used as a lightweight placeholder in the UI. */
-  icon: string;
   /** One-line description for the asset detail page. */
   description: string;
 }
@@ -28,7 +26,6 @@ export const ASSETS: AssetMeta[] = [
     unit: "gram",
     referenceSymbol: "XAU",
     decimals: 18,
-    icon: "🥇",
     description:
       "Tokenized fractional claim on Emas Antam, Indonesia's benchmark refined gold. A precious-metal store of value bridging TradFi reserves and DeFi liquidity.",
   },
@@ -40,7 +37,6 @@ export const ASSETS: AssetMeta[] = [
     unit: "ton",
     referenceSymbol: "NICKEL",
     decimals: 18,
-    icon: "⚙️",
     description:
       "Tokenized nickel, the base metal at the core of Indonesia's downstream industrialization and the global EV battery supply chain.",
   },
@@ -52,7 +48,6 @@ export const ASSETS: AssetMeta[] = [
     unit: "ton",
     referenceSymbol: "CPO",
     decimals: 18,
-    icon: "🌴",
     description:
       "Tokenized Crude Palm Oil, Indonesia's flagship agricultural export commodity, fractionalized for on-chain exposure.",
   },
@@ -64,7 +59,6 @@ export const ASSETS: AssetMeta[] = [
     unit: "ton",
     referenceSymbol: "COAL",
     decimals: 18,
-    icon: "⚫",
     description:
       "Tokenized thermal coal (Batu Bara), a key Indonesian energy-commodity export, represented as a fractional on-chain claim.",
   },

@@ -51,13 +51,10 @@ export function Dashboard() {
                   key={e.symbol}
                   className="flex items-center justify-between rounded-lg border border-forest-800/60 px-4 py-3"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{e.icon}</span>
-                    <div>
-                      <div className="font-semibold">{e.symbol}</div>
-                      <div className="text-xs text-cream/50">
-                        {e.price > 0n ? formatPrice(e.price) : "-"} / unit
-                      </div>
+                  <div>
+                    <div className="font-semibold">{e.symbol}</div>
+                    <div className="text-xs text-cream/50">
+                      {e.price > 0n ? formatPrice(e.price) : "-"} / unit
                     </div>
                   </div>
                   <div className="text-right">

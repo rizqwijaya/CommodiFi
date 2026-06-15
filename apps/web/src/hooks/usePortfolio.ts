@@ -6,7 +6,6 @@ import { tokenValueUsd } from "../lib/format";
 export interface PortfolioEntry {
   symbol: string;
   address: `0x${string}`;
-  icon: string;
   balance: bigint;
   price: bigint;
   valueUsd: number;
@@ -36,7 +35,6 @@ export function usePortfolio() {
     return {
       symbol: a.symbol,
       address: a.address,
-      icon: a.icon,
       balance,
       price,
       valueUsd: tokenValueUsd(balance, price),

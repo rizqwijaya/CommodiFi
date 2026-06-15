@@ -9,12 +9,9 @@ export function AssetCard({ asset }: { asset: AssetWithData }) {
       className="card group transition hover:border-gold-400/60 hover:shadow-gold-500/10"
     >
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{asset.icon}</span>
-          <div>
-            <div className="font-semibold">{asset.symbol}</div>
-            <div className="text-sm text-cream/60">{asset.assetName}</div>
-          </div>
+        <div>
+          <div className="font-semibold">{asset.symbol}</div>
+          <div className="text-sm text-cream/60">{asset.assetName}</div>
         </div>
         <span className="pill">{asset.category}</span>
       </div>
