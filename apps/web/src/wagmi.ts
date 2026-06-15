@@ -1,15 +1,23 @@
-import { createConfig, http } from "wagmi";
+import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { http } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
 
 const rpcUrl = import.meta.env.VITE_SEPOLIA_RPC_URL as string | undefined;
 
-export const wagmiConfig = createConfig({
+// WalletConnect project id. Required by RainbowKit's getDefaultConfig.
+// Get one (free) at https://cloud.reown.com. A placeholder still allows injected
+// wallets (MetaMask) to connect; WalletConnect-based wallets need a real id.
+const projectId =
+  (import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string | undefined) || "commodifi-demo";
+
+export const wagmiConfig = getDefaultConfig({
+  appName: "CommodiFi",
+  projectId,
   chains: [sepolia],
-  connectors: [injected()],
   transports: {
     [sepolia.id]: http(rpcUrl || undefined),
   },
+  ssr: false,
 });
 
 declare module "wagmi" {

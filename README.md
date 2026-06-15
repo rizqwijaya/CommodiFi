@@ -13,7 +13,7 @@ Deployed to **Sepolia** and verified - see [DEPLOYMENTS.md](DEPLOYMENTS.md).
 src/ test/ script/         Foundry contracts, tests, deploy script (root)
 packages/contracts-abi/    Shared ABIs + deployed addresses + asset metadata (TS)
 apps/api/                  Node + node:sqlite indexer & REST API (Express + viem)
-apps/web/                  React + Vite + Tailwind + wagmi/viem dApp
+apps/web/                  React + Vite + Tailwind + wagmi/viem + RainbowKit dApp
 ```
 
 ## Quick start (web + api)

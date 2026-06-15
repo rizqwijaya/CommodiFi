@@ -3,19 +3,31 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
 import { wagmiConfig } from "./wagmi";
 import { App } from "./App";
 import "./index.css";
 
 const queryClient = new QueryClient();
 
+// RainbowKit theme tuned to the CommodiFi earthy green/gold palette.
+const commodifiTheme = darkTheme({
+  accentColor: "#c9a227",
+  accentColorForeground: "#08110d",
+  borderRadius: "medium",
+  overlayBlur: "small",
+});
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <RainbowKitProvider theme={commodifiTheme}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>,
