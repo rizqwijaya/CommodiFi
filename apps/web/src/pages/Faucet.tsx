@@ -5,6 +5,7 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import { ASSETS, addresses, commodiFiVaultAbi } from "@commodifi/contracts-abi";
 import { usePortfolio } from "../hooks/usePortfolio";
 import { formatToken } from "../lib/format";
+import { addTokenToWallet } from "../lib/watchAsset";
 import { ConnectButton } from "../components/ConnectButton";
 import { Reveal } from "../components/motion";
 import { Confetti } from "../components/Confetti";
@@ -181,6 +182,12 @@ export function Faucet() {
                           ? "✓ Claimed!"
                           : `Claim ${a.symbol}`}
                   </button>
+
+                  <AddToWalletButton
+                    address={a.address}
+                    symbol={a.symbol}
+                    decimals={a.decimals}
+                  />
                 </motion.div>
               );
             })}
@@ -208,33 +215,113 @@ export function Faucet() {
   );
 }
 
-/** Animated faucet tap that drips gold droplets, faster while busy. */
+/** Animated faucet tap (SVG) that drips gold droplets, faster while busy. */
 function DrippingTap({ busy }: { busy: boolean }) {
+  const dur = busy ? 0.7 : 1.7;
   return (
-    <div className="relative mx-auto h-24 w-40">
-      {/* tap body */}
-      <div className="absolute left-1/2 top-0 h-7 w-24 -translate-x-1/2 rounded-lg bg-gradient-to-b from-gold-400 to-gold-500 shadow-glow" />
-      <div className="absolute left-1/2 top-6 h-5 w-5 -translate-x-1/2 rounded-b-lg bg-gold-500" />
-      {/* droplets */}
+    <div className="relative mx-auto h-28 w-44">
+      <svg
+        viewBox="0 0 176 96"
+        className="absolute inset-0 h-full w-full drop-shadow-[0_6px_16px_rgba(201,162,39,0.35)]"
+        fill="none"
+      >
+        <defs>
+          <linearGradient id="tapMetal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#f0dd9c" />
+            <stop offset="55%" stopColor="#d9b945" />
+            <stop offset="100%" stopColor="#b8941f" />
+          </linearGradient>
+        </defs>
+        {/* wall mount */}
+        <rect x="14" y="20" width="14" height="34" rx="4" fill="url(#tapMetal)" />
+        {/* horizontal body */}
+        <rect x="22" y="22" width="86" height="16" rx="8" fill="url(#tapMetal)" />
+        {/* valve handle on top */}
+        <rect x="58" y="8" width="10" height="16" rx="3" fill="url(#tapMetal)" />
+        <circle cx="63" cy="8" r="8" fill="url(#tapMetal)" />
+        {/* down spout */}
+        <rect x="100" y="30" width="16" height="30" rx="7" fill="url(#tapMetal)" />
+        <rect x="98" y="54" width="20" height="9" rx="4" fill="url(#tapMetal)" />
+        {/* subtle highlight */}
+        <rect x="26" y="25" width="78" height="3" rx="1.5" fill="#fff6d8" opacity="0.5" />
+      </svg>
+
+      {/* droplets fall from spout tip (~x 108, y 63) */}
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="absolute left-1/2 top-11 h-2 w-2 -translate-x-1/2 rounded-full bg-gold-300"
-          animate={{ y: [0, 44], opacity: [0, 1, 0], scale: [0.6, 1, 0.4] }}
-          transition={{
-            duration: busy ? 0.7 : 1.6,
-            repeat: Infinity,
-            delay: i * (busy ? 0.23 : 0.55),
-            ease: "easeIn",
-          }}
+          className="absolute h-2.5 w-2 rounded-full bg-gradient-to-b from-gold-200 to-gold-400"
+          style={{ left: "61%", top: 62, borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%" }}
+          animate={{ y: [0, 30], opacity: [0, 1, 1, 0], scaleY: [0.7, 1.1, 1, 0.8] }}
+          transition={{ duration: dur, repeat: Infinity, delay: i * (dur / 3), ease: "easeIn" }}
         />
       ))}
+
       {/* pool ripple */}
       <motion.span
-        className="absolute bottom-0 left-1/2 h-1.5 w-16 -translate-x-1/2 rounded-full bg-gold-500/30 blur-[1px]"
-        animate={{ scaleX: [0.7, 1.1, 0.7], opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: busy ? 0.7 : 1.6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-[61%] h-1.5 w-14 -translate-x-1/2 rounded-full bg-gold-500/30 blur-[1px]"
+        style={{ top: 92 }}
+        animate={{ scaleX: [0.6, 1.15, 0.6], opacity: [0.3, 0.7, 0.3] }}
+        transition={{ duration: dur, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
+  );
+}
+
+/** "Add to wallet" button using EIP-747 wallet_watchAsset. */
+function AddToWalletButton({
+  address,
+  symbol,
+  decimals,
+}: {
+  address: string;
+  symbol: string;
+  decimals: number;
+}) {
+  const [state, setState] = useState<"idle" | "pending" | "added" | "error">("idle");
+
+  async function add() {
+    setState("pending");
+    try {
+      await addTokenToWallet({ address, symbol, decimals });
+      setState("added");
+      setTimeout(() => setState("idle"), 2500);
+    } catch {
+      setState("error");
+      setTimeout(() => setState("idle"), 2500);
+    }
+  }
+
+  return (
+    <button
+      onClick={add}
+      disabled={state === "pending"}
+      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-forest-700 py-2 text-xs font-medium text-cream/70 transition hover:border-gold-400/50 hover:text-gold-300"
+    >
+      {state === "added" ? (
+        <span className="text-emerald-300">✓ Added to wallet</span>
+      ) : state === "error" ? (
+        <span className="text-red-300">No wallet detected</span>
+      ) : state === "pending" ? (
+        "Opening wallet…"
+      ) : (
+        <>
+          <WalletIcon /> Add {symbol} to wallet
+        </>
+      )}
+    </button>
+  );
+}
+
+function WalletIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="opacity-70">
+      <path
+        d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1h1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <circle cx="16.5" cy="12" r="1.3" fill="currentColor" />
+    </svg>
   );
 }
