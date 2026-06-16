@@ -1,0 +1,19 @@
+{
+  "name": "@commodifi/netlify-functions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Serverless API (Netlify Functions) — stateless on-chain reads replacing the indexer-backed Express API.",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@commodifi/contracts-abi": "workspace:*",
+    "viem": "^2.21.45"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.8.2",
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
+  }
+}

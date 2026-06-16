@@ -1,0 +1,21 @@
+# Netlify config for CommodiFi: static web (Vite) + serverless API (Functions).
+# The functions replace the indexer-backed Express API with stateless on-chain
+# scans, served at /events and /price-history/* via each function's config.path.
+
+[build]
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @commodifi/web build"
+  publish = "apps/web/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# SPA fallback. Function routes (/events, /price-history/*) are matched before this
+# catch-all, so only non-function paths fall through to the app shell.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

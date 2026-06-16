@@ -1,4 +1,9 @@
-const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:4000";
+// In production the API is served by Netlify Functions at the site's own origin
+// (/events, /price-history/*), so VITE_API_URL can be empty (same-origin). For
+// local dev against the Express API, default to its port.
+const API_URL =
+  (import.meta.env.VITE_API_URL as string | undefined) ??
+  (import.meta.env.DEV ? "http://localhost:4000" : "");
 
 export interface PricePoint {
   time: number;

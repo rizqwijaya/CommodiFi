@@ -2,6 +2,9 @@ import { DatabaseSync } from "node:sqlite";
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { config } from "./config";
+import type { EventRow } from "./types";
+
+export type { EventRow } from "./types";
 
 const dir = dirname(config.dbPath);
 if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true });
@@ -59,19 +62,6 @@ export function setCursor(block: bigint): void {
   ).run(Number(block));
 }
 
-export interface EventRow {
-  type: "Deposit" | "Redeem" | "Transfer" | "PriceUpdate";
-  token: string | null;
-  from_addr: string | null;
-  to_addr: string | null;
-  amount: string | null;
-  price: string | null;
-  reserve: string | null;
-  block_number: number;
-  block_time: number | null;
-  tx_hash: string;
-  log_index: number;
-}
 
 const insertEventStmt = db.prepare(`
   INSERT OR IGNORE INTO events
