@@ -13,6 +13,6 @@
     "abi:sync": "pnpm --filter @commodifi/contracts-abi sync"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.5"
   }
 }
