@@ -7,7 +7,10 @@ import { getPriceHistory, getRecentEvents } from "./db";
 
 export function createServer() {
   const app = express();
-  app.use(cors());
+  // Lock CORS to a specific origin in production via CORS_ORIGIN (comma-separated),
+  // or allow all when unset (handy for local dev / demos).
+  const origins = process.env.CORS_ORIGIN?.split(",").map((s) => s.trim());
+  app.use(cors(origins && origins.length ? { origin: origins } : undefined));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {

@@ -1,0 +1,30 @@
+# Render Blueprint for the CommodiFi API (indexer + REST).
+# Deploy: render.com -> New -> Blueprint -> point at this repo.
+# Set the secret env vars (SEPOLIA_RPC_URL) in the Render dashboard after creation.
+services:
+  - type: web
+    name: commodifi-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: .
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: pnpm --filter @commodifi/api start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: PORT
+        value: "4000"
+      - key: SEPOLIA_RPC_URL
+        sync: false # set in dashboard (secret)
+      - key: START_BLOCK
+        value: "11062600"
+      - key: INDEX_LOOKBACK
+        value: "2000"
+      - key: LOG_CHUNK_SIZE
+        value: "10"
+      - key: POLL_INTERVAL_MS
+        value: "30000"
+      - key: DB_PATH
+        value: "./apps/api/data/commodifi.sqlite"
