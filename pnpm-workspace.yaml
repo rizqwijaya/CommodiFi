@@ -3,7 +3,13 @@ packages:
   - "packages/*"
   - "netlify"
 
-# Allow native/build scripts only for the packages that genuinely need them.
+# Allow build/install scripts only for the deps that genuinely need them. pnpm v11
+# blocks dep build scripts by default and (with strictDepBuilds on) FAILS the install
+# with ERR_PNPM_IGNORED_BUILDS on a clean CI run (Netlify) — so each must be set true.
 # (better-sqlite3 dropped in favor of the built-in node:sqlite module.)
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
+  keccak: true
+  secp256k1: true
+  bufferutil: true
+  utf-8-validate: true
