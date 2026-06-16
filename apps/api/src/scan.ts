@@ -1,6 +1,6 @@
 import { parseAbiItem, type Log } from "viem";
 import { addresses, ASSETS } from "@commodifi/contracts-abi";
-import { publicClient } from "./chain";
+import { scanClient as publicClient } from "./chain";
 import type { EventRow } from "./types";
 
 // Stateless on-chain scan: the same log decoding the indexer uses, but it returns
@@ -51,12 +51,37 @@ function baseRow(log: AnyLog, type: EventRow["type"]): EventRow {
 export async function scanRows(fromBlock: bigint, toBlock: bigint): Promise<EventRow[]> {
   const rows: EventRow[] = [];
 
-  const deposits = await publicClient.getLogs({
-    address: addresses.vault as `0x${string}`,
-    event: depositEvent,
-    fromBlock,
-    toBlock,
-  });
+  // Fire the four log queries in parallel — they're independent and this keeps a
+  // single 500-block scan well under the 10s function timeout (sequential is ~10x
+  // slower). The shared scanClient has batching off, so these go out as separate
+  // requests (batched multi-address getLogs breaks on Infura).
+  const [deposits, redeems, priceUpdates, transfers] = await Promise.all([
+    publicClient.getLogs({
+      address: addresses.vault as `0x${string}`,
+      event: depositEvent,
+      fromBlock,
+      toBlock,
+    }),
+    publicClient.getLogs({
+      address: addresses.vault as `0x${string}`,
+      event: redeemEvent,
+      fromBlock,
+      toBlock,
+    }),
+    publicClient.getLogs({
+      address: addresses.priceOracle as `0x${string}`,
+      event: priceUpdateEvent,
+      fromBlock,
+      toBlock,
+    }),
+    publicClient.getLogs({
+      address: TOKEN_ADDRESSES as `0x${string}`[],
+      event: transferEvent,
+      fromBlock,
+      toBlock,
+    }),
+  ]);
+
   for (const log of deposits) {
     const r = baseRow(log, "Deposit");
     r.from_addr = (log.args.user ?? "").toLowerCase() || null;
@@ -66,12 +91,6 @@ export async function scanRows(fromBlock: bigint, toBlock: bigint): Promise<Even
     rows.push(r);
   }
 
-  const redeems = await publicClient.getLogs({
-    address: addresses.vault as `0x${string}`,
-    event: redeemEvent,
-    fromBlock,
-    toBlock,
-  });
   for (const log of redeems) {
     const r = baseRow(log, "Redeem");
     r.from_addr = (log.args.user ?? "").toLowerCase() || null;
@@ -81,12 +100,6 @@ export async function scanRows(fromBlock: bigint, toBlock: bigint): Promise<Even
     rows.push(r);
   }
 
-  const priceUpdates = await publicClient.getLogs({
-    address: addresses.priceOracle as `0x${string}`,
-    event: priceUpdateEvent,
-    fromBlock,
-    toBlock,
-  });
   for (const log of priceUpdates) {
     const r = baseRow(log, "PriceUpdate");
     r.token = (log.args.token ?? "").toLowerCase() || null;
@@ -94,12 +107,6 @@ export async function scanRows(fromBlock: bigint, toBlock: bigint): Promise<Even
     rows.push(r);
   }
 
-  const transfers = await publicClient.getLogs({
-    address: TOKEN_ADDRESSES as `0x${string}`[],
-    event: transferEvent,
-    fromBlock,
-    toBlock,
-  });
   for (const log of transfers) {
     const r = baseRow(log, "Transfer");
     r.token = log.address.toLowerCase();
@@ -139,25 +146,15 @@ export async function scanRows(fromBlock: bigint, toBlock: bigint): Promise<Even
 }
 
 /**
- * Scan the most recent `lookback` blocks in chunks and return all rows, newest
- * first. chunkSize defaults high (free RPC tiers still allow wide ranges for
- * small windows); callers tune it for their endpoint.
+ * Scan the most recent `lookback` blocks and return all rows, newest first.
+ * A small window (a few hundred blocks) stays under Infura's 10000-results/range
+ * cap, so it's done as a single parallel scanRows call — no chunking needed, which
+ * keeps the whole request ~1-2s (well under the 10s function timeout).
  */
-export async function scanRecent(
-  lookback: bigint,
-  chunkSize: bigint,
-): Promise<EventRow[]> {
+export async function scanRecent(lookback: bigint): Promise<EventRow[]> {
   const latest = await publicClient.getBlockNumber();
   const start = latest > lookback ? latest - lookback : 0n;
-  const rows: EventRow[] = [];
-  let from = start;
-  while (from <= latest) {
-    const to = from + chunkSize - 1n > latest ? latest : from + chunkSize - 1n;
-    rows.push(...(await scanRows(from, to)));
-    from = to + 1n;
-  }
-  rows.sort((a, b) =>
-    b.block_number - a.block_number || b.log_index - a.log_index,
-  );
+  const rows = await scanRows(start, latest);
+  rows.sort((a, b) => b.block_number - a.block_number || b.log_index - a.log_index);
   return rows;
 }

@@ -7,9 +7,6 @@ import { resolveToken } from "../../apps/api/src/token";
 // SCAN_LOOKBACK blocks on-chain per request (no DB), newest first, with the same
 // ?token / ?address / ?limit filters the web app already sends.
 const LOOKBACK = BigInt(Number(process.env.SCAN_LOOKBACK ?? 500));
-// Wider chunk than the indexer's 10: small windows are fine for free RPC tiers and
-// fewer getLogs calls keeps us under the 10s function timeout.
-const CHUNK = BigInt(Number(process.env.SCAN_CHUNK ?? 200));
 
 export default async (req: Request, _context: Context) => {
   const url = new URL(req.url);
@@ -22,7 +19,7 @@ export default async (req: Request, _context: Context) => {
     addressParam && isAddress(addressParam) ? addressParam.toLowerCase() : undefined;
 
   try {
-    let rows = await scanRecent(LOOKBACK, CHUNK);
+    let rows = await scanRecent(LOOKBACK);
     if (token) rows = rows.filter((r) => r.token === token);
     if (address)
       rows = rows.filter((r) => r.from_addr === address || r.to_addr === address);
